@@ -137,8 +137,10 @@ class Review(Model):
     email = EmailField()
     name = CharField("Имя", max_length=100)
     text = TextField("Сообщение", max_length=5000)
-    parent = ForeignKey("self", verbose_name="Родитель", on_delete=SET_NULL, blank=True, null=True)
-    movie = ForeignKey(Movie, verbose_name="Фильм", on_delete=CASCADE)
+    parent = ForeignKey(
+        "self", verbose_name="Родитель", on_delete=SET_NULL, blank=True, null=True, related_name='children'
+    )
+    movie = ForeignKey(Movie, verbose_name="Фильм", on_delete=CASCADE, related_name='reviews')
 
     def __str__(self):
         return f"{self.name} - {self.movie}"
