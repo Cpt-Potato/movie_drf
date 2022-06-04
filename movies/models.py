@@ -115,7 +115,6 @@ class RatingStar(Model):
     class Meta:
         verbose_name = "Звезда рейтинга"
         verbose_name_plural = "Звезды рейтинга"
-        ordering = ['-value']
 
 
 class Rating(Model):
