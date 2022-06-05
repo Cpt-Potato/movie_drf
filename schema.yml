@@ -8,6 +8,19 @@ paths:
     get:
       operationId: api_v1_actors_list
       description: Вывод списка актёров и режиссёров
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       tags:
       - api
       security:
@@ -19,14 +32,49 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ActorDirectorList'
+                $ref: '#/components/schemas/PaginatedActorDirectorListList'
+          description: ''
+  /api/v1/actors{format}:
+    get:
+      operationId: api_v1_actors_formatted_list
+      description: Вывод списка актёров и режиссёров
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedActorDirectorListList'
           description: ''
   /api/v1/actors/{id}/:
     get:
       operationId: api_v1_actors_retrieve
-      description: Вывод информации об актёре или режиссёре
+      description: Вывод списка актёров и режиссёров
       parameters:
       - in: path
         name: id
@@ -46,9 +94,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/ActorDirectorDetail'
           description: ''
-  /api/v1/movie/:
+  /api/v1/actors/{id}{format}:
     get:
-      operationId: api_v1_movie_list
+      operationId: api_v1_actors_formatted_retrieve
+      description: Вывод списка актёров и режиссёров
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorDirectorDetail'
+          description: ''
+  /api/v1/movies/:
+    get:
+      operationId: api_v1_movies_list
       description: Вывод списка фильмов
       parameters:
       - in: query
@@ -60,38 +138,85 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: year_max
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
         schema:
           type: integer
-          maximum: 32767
-          minimum: 0
-          title: Год выхода
       - in: query
-        name: year_min
+        name: years_max
         schema:
-          type: integer
-          maximum: 32767
-          minimum: 0
-          title: Год выхода
+          type: string
+      - in: query
+        name: years_min
+        schema:
+          type: string
       tags:
       - api
       security:
       - tokenAuth: []
       - jwtAuth: []
+      - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/MovieList'
+                $ref: '#/components/schemas/PaginatedMovieListList'
           description: ''
-  /api/v1/movie/{id}/:
+  /api/v1/movies{format}:
     get:
-      operationId: api_v1_movie_retrieve
-      description: Вывод полной информации о фильме
+      operationId: api_v1_movies_formatted_list
+      description: Вывод списка фильмов
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      - in: query
+        name: genres
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: years_max
+        schema:
+          type: string
+      - in: query
+        name: years_min
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMovieListList'
+          description: ''
+  /api/v1/movies/{id}/:
+    get:
+      operationId: api_v1_movies_retrieve
+      description: Вывод списка фильмов
       parameters:
       - in: path
         name: id
@@ -111,9 +236,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/MovieDetail'
           description: ''
-  /api/v1/rating/:
+  /api/v1/movies/{id}{format}:
+    get:
+      operationId: api_v1_movies_formatted_retrieve
+      description: Вывод списка фильмов
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovieDetail'
+          description: ''
+  /api/v1/ratings/:
     post:
-      operationId: api_v1_rating_create
+      operationId: api_v1_ratings_create
       description: Добавление рейтинга к фильму
       tags:
       - api
@@ -140,10 +295,84 @@ paths:
               schema:
                 $ref: '#/components/schemas/CreateRating'
           description: ''
-  /api/v1/review/:
+  /api/v1/ratings{format}:
     post:
-      operationId: api_v1_review_create
+      operationId: api_v1_ratings_formatted_create
+      description: Добавление рейтинга к фильму
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRating'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateRating'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateRating'
+        required: true
+      security:
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateRating'
+          description: ''
+  /api/v1/reviews/:
+    post:
+      operationId: api_v1_reviews_create
       description: Добавление отзыва к фильму
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReviewCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReviewCreate'
+        required: true
+      security:
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewCreate'
+          description: ''
+  /api/v1/reviews{format}:
+    post:
+      operationId: api_v1_reviews_formatted_create
+      description: Добавление отзыва к фильму
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
       tags:
       - api
       requestBody:
@@ -293,6 +522,19 @@ paths:
   /auth/users/:
     get:
       operationId: auth_users_list
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       tags:
       - auth
       security:
@@ -303,9 +545,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/PaginatedUserList'
           description: ''
     post:
       operationId: auth_users_create
@@ -923,6 +1163,66 @@ components:
       - avg_rating
       - title
       - user_rating
+    PaginatedActorDirectorListList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActorDirectorList'
+    PaginatedMovieListList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/MovieList'
+    PaginatedUserList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
     PasswordResetConfirm:
       type: object
       properties:
