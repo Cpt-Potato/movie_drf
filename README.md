@@ -1,7 +1,5 @@
 Кинобиблиотека на Django Rest Framework.
 
-Проект написан в рамках обучающего курса по Django Rest Framework на youtube.
-
 - Категории
 - Жанры
 - Фильмы
