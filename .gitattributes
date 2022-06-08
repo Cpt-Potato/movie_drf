@@ -1,2 +1,2 @@
-*.js -linguist-vendored
+*.js -linguist-vendored=False
 *.html -linguist-vendored
